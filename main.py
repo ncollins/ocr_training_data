@@ -17,21 +17,19 @@ fonts = {
     "verdana": ImageFont.truetype(u"/Library/Fonts/Verdana.ttf",fontsize),
 }
 
-def make_text_image(text, font):
+def make_text_image(text, f):
     im = Image.new("L",(3000,300))
     draw = ImageDraw.Draw(im)
-    draw.text((20, 20), text1, font=fonts["song"], fill=255)
+    draw.text((20, 20), text1, font=f, fill=255)
     im_resized = im.resize((1000,100), Image.ANTIALIAS)
+    return im_resized
 
 
 def glue_images_vertical(im0, im1):
-    if im0.size != im1.size or im0.mode != im1.mode:
-        raise Exception
-    else:
-        im_out = Image.new(im0.mode,(im0.size[0],2*im0.size[1]))
-        im_out.paste(im0,(0,0))
-        im_out.paste(im1,(0,im0.size[1]))
-        return im_out
+    im_out = Image.new(im0.mode, (im0.size[0], 2*im0.size[1]))
+    im_out.paste(im0,(0,0))
+    im_out.paste(im1,(0,im0.size[1]))
+    return im_out
 
 
 def splice_images_vertical(im0, im1):
@@ -39,3 +37,17 @@ def splice_images_vertical(im0, im1):
     w, h = im_tmp.size
     top, bottom = h // 4, h * 3 // 4
     return im_tmp.crop((0,top,w,bottom))
+
+
+def glue_images_horizontal(im0, im1):
+    im_out = Image.new(im0.mode,(2*im0.size[0], im0.size[1]))
+    im_out.paste(im0,(0,0))
+    im_out.paste(im1,(im0.size[0],0))
+    return im_out
+
+
+def splice_images_horizontal(im0, im1):
+    im_tmp = glue_images_horizontal(im0, im1)
+    w, h = im_tmp.size
+    left, right = w // 4, w * 3 // 4
+    return im_tmp.crop((left,0,right,h))
