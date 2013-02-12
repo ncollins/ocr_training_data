@@ -1,5 +1,5 @@
 ocr_training_data
 =================
 
-Generate training data for Optical Character Recognitions with Python.
+Generate training data for Optical Character Recognition with Python.
 
