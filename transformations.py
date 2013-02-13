@@ -1,7 +1,26 @@
 # coding=UTF-8
 # Generate training sets for text recognition
 
-import Image, ImageDraw, ImageFont
+import Image, ImageOps
+
+# Single image transformations
+
+def edentity(im):
+    """
+    Identity function for Image objects.
+    """
+    return im
+
+
+def invert(im):
+    """
+    Just a wrapper around the ImageOps function,
+    takes an image and returns it with colors inverted.
+    """
+    return ImageOps.invert(im)
+
+
+# Composite two-image transformations
 
 def _glue_vertical(im0, im1):
     """
