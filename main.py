@@ -68,4 +68,4 @@ if __name__ == '__main__':
     fonts = [fonts["arial"], fonts["georgia"], fonts["verdana"]]
     transforms = [splice_vertical, splice_horizontal]
     images = text_images(texts, fonts, (3000,300))
-    products = images_tranform_product(images(), transforms)
+    products = images_tranform_product(images, transforms)
