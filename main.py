@@ -50,7 +50,18 @@ def text_images(texts, fonts, size):
                                         for f in fonts)
 
 
-def images_tranform_product(images, transformations):
+def images_transform_simple(images, transformations):
+    """
+    Parameters:
+        images - an iterable of images
+        transformations - transformations that operate on one image
+    Output:
+        a generator of the images with transformations applied
+    """
+    return (t(i) for i in images for t in transformations)
+
+
+def images_transform_product(images, transformations):
     """
     Parameters:
         images - an iterable of images
@@ -63,9 +74,35 @@ def images_tranform_product(images, transformations):
     return (t(im1,im2) for t in transformations for im1, im2 in product)
 
 
+def imerge(iter0, iter1):
+    for i,j in itertools.izip(iter0, iter1):
+        yield i
+        yield j
+
+
+def catagorized_image_transforms(images, preserving, non_preserving):
+    """
+    Parameters:
+        images - an interable of images
+        preserving - transformations that preserve the "text" nature of an image
+        non_preserving - tranformation that break the "text" nature
+    Output:
+        a generator of (Image, bool) tuples where the bool indicates whether
+        the images is a "text" image or not
+    """
+    images0, images1 = itertools.tee(images, 2)
+    text = itertools.izip(images_transform_simple(images0, preserving),
+                          itertools.repeat(True))
+    #test = images_transform_product(images, non_preserving)
+    non_text = itertools.izip(images_transform_product(images1, non_preserving),
+                              itertools.repeat(False))
+    return imerge(text, non_text)
+
 if __name__ == '__main__':
-    texts = ["hello, world!", "goodbye, world!", "the quick brown fox..."]
-    fonts = [fonts["arial"], fonts["georgia"], fonts["verdana"]]
+    texts = ['hello, world!', 'the quick brown fox...', 'goodbye, world!', 'HaSch']
+    fonts = [fonts['arial'], fonts['georgia'], fonts['verdana']]
     transforms = [splice_vertical, splice_horizontal]
     images = text_images(texts, fonts, (3000,300))
-    products = images_tranform_product(images, transforms)
+    catagorized = catagorized_image_transforms(images,
+                                              [edentity, invert],
+                                              [splice_horizontal, splice_vertical])
