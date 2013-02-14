@@ -21,7 +21,7 @@ fonts = {
     "verdana": ImageFont.truetype(u"/Library/Fonts/Verdana.ttf",fontsize),
 }
 
-def make_text_image(text, font, size):
+def text_image_single(text, font, size):
     """
     Parameters:
         text - a string
@@ -37,7 +37,7 @@ def make_text_image(text, font, size):
     return im_resized
 
 
-def make_text_images(texts, fonts, size):
+def text_images(texts, fonts, size):
     """
     Parameters:
         texts - an iterable of text values
@@ -46,10 +46,8 @@ def make_text_images(texts, fonts, size):
     Output:
         A (lazy) generator of Image objects, each with one piece of text.
     """
-    def inner():
-        return (make_text_image(txt,f,size) for txt in texts 
+    return (text_image_single(txt,f,size) for txt in texts 
                                         for f in fonts)
-    return inner
 
 
 def images_tranform_product(images, transformations):
@@ -69,5 +67,5 @@ if __name__ == '__main__':
     texts = ["hello, world!", "goodbye, world!", "the quick brown fox..."]
     fonts = [fonts["arial"], fonts["georgia"], fonts["verdana"]]
     transforms = [splice_vertical, splice_horizontal]
-    images = make_text_images(texts, fonts, (3000,300))
+    images = text_images(texts, fonts, (3000,300))
     products = images_tranform_product(images(), transforms)
