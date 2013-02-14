@@ -61,8 +61,7 @@ def images_tranform_product(images, transformations):
         a generator of images formed by applying the tranformations to
         pairs of images
     """
-    l = list(images)
-    product = itertools.product(l,l)
+    product = itertools.product(images, repeat=2)
     return (t(im1,im2) for t in transformations for im1, im2 in product)
 
 
