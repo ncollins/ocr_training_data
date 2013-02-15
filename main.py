@@ -61,6 +61,17 @@ def images_transform_simple(images, transformations):
     return (t(i) for i in images for t in transformations)
 
 
+def ipair(iter0):
+    i = None
+    for j in iter0:
+        if i == None:
+            first = j
+        else:
+            yield (i,j)
+        i = j
+    yield (j, first)
+
+
 def images_transform_product(images, transformations):
     """
     Parameters:
@@ -70,7 +81,7 @@ def images_transform_product(images, transformations):
         a generator of images formed by applying the tranformations to
         pairs of images
     """
-    product = itertools.product(images, repeat=2)
+    product = ipair(images)
     return (t(im1,im2) for t in transformations for im1, im2 in product)
 
 
@@ -93,16 +104,29 @@ def catagorized_image_transforms(images, preserving, non_preserving):
     images0, images1 = itertools.tee(images, 2)
     text = itertools.izip(images_transform_simple(images0, preserving),
                           itertools.repeat(True))
-    #test = images_transform_product(images, non_preserving)
     non_text = itertools.izip(images_transform_product(images1, non_preserving),
                               itertools.repeat(False))
     return imerge(text, non_text)
 
 if __name__ == '__main__':
-    texts = ['hello, world!', 'the quick brown fox...', 'goodbye, world!', 'HaSch']
+    f = open('data/brown.txt', 'r')
+
+    texts = (line for line in f)
+    print('texts = %s' % (str(texts)))
+
     fonts = [fonts['arial'], fonts['georgia'], fonts['verdana']]
     transforms = [splice_vertical, splice_horizontal]
+
     images = text_images(texts, fonts, (3000,300))
+    print('images = %s' % (str(images)))
+
     catagorized = catagorized_image_transforms(images,
                                               [edentity, invert],
                                               [splice_horizontal, splice_vertical])
+    print('catagorized = %s' % (str(catagorized)))
+    
+    count = 0
+    for im,b in catagorized:
+        print(count)
+        count += 1
+    f.close()
