@@ -20,6 +20,21 @@ def invert(im):
     return ImageOps.invert(im)
 
 
+def return_first(im0, im1):
+    """
+    Returns first argument.
+    """
+    return im0
+
+
+def invert_first(im0, im1):
+    """
+    Applies ImageOps.invert() to the first argument
+    and returns it.
+    """
+    return ImagesOps.invert(im0)
+
+
 # Composite two-image transformations
 
 def _glue_vertical(im0, im1):
