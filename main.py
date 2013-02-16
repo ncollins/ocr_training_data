@@ -6,13 +6,10 @@ import Image, ImageDraw, ImageFont
 import itertools
 
 from transformations import edentity, invert 
+from transformations import return_first, invert_first
 from transformations import splice_horizontal, splice_vertical
 
-text0 = u"Hello, world!"
-text1 = u"您好，世界！"
-
-
-fontsize = 256
+fontsize = 64
 fonts = {
     "song": ImageFont.truetype(u"/Library/Fonts/华文宋体.ttf",fontsize),
     "black": ImageFont.truetype(u"/Library/Fonts/华文细黑.ttf",fontsize),
@@ -30,10 +27,10 @@ def text_image_single(text, font, size):
     Output:
         An Image displaying the text
     """
-    im = Image.new("L",(3000,300))
+    im = Image.new("L",(size[0]*2,size[1]*2))
     draw = ImageDraw.Draw(im)
     draw.text((20, 20), text, font=font, fill=255)
-    im_resized = im.resize((1000,100), Image.ANTIALIAS)
+    im_resized = im.resize(size, Image.ANTIALIAS)
     return im_resized
 
 
@@ -50,17 +47,6 @@ def text_images(texts, fonts, size):
                                         for f in fonts)
 
 
-def images_transform_simple(images, transformations):
-    """
-    Parameters:
-        images - an iterable of images
-        transformations - transformations that operate on one image
-    Output:
-        a generator of the images with transformations applied
-    """
-    return (t(i) for i in images for t in transformations)
-
-
 def ipair(iter0):
     i = None
     for j in iter0:
@@ -70,25 +56,6 @@ def ipair(iter0):
             yield (i,j)
         i = j
     yield (j, first)
-
-
-def images_transform_product(images, transformations):
-    """
-    Parameters:
-        images - an iterable of images
-        transformations - transformations that operate on two images
-    Output:
-        a generator of images formed by applying the tranformations to
-        pairs of images
-    """
-    product = ipair(images)
-    return (t(im1,im2) for t in transformations for im1, im2 in product)
-
-
-def imerge(iter0, iter1):
-    for i,j in itertools.izip(iter0, iter1):
-        yield i
-        yield j
 
 
 def catagorized_image_transforms(images, preserving, non_preserving):
@@ -101,28 +68,29 @@ def catagorized_image_transforms(images, preserving, non_preserving):
         a generator of (Image, bool) tuples where the bool indicates whether
         the images is a "text" image or not
     """
-    images0, images1 = itertools.tee(images, 2)
-    text = itertools.izip(images_transform_simple(images0, preserving),
-                          itertools.repeat(True))
-    non_text = itertools.izip(images_transform_product(images1, non_preserving),
-                              itertools.repeat(False))
-    return imerge(text, non_text)
+    trans0 = [(lambda x, y: x, True)] + [(t, False) for t in non_preserving]
+    trans1 = [lambda x: x] + [t for t in preserving]
+    first = ((t(im0, im1), b) for im0, im1 in ipair(images) for t, b in trans0)
+    second = ((t(im), b) for im, b in first for t in trans1)
+    return second
+
 
 if __name__ == '__main__':
     f = open('data/brown.txt', 'r')
 
     texts = (line for line in f)
+    #texts = ['hello', 'goodbye', 'hacker school']
     print('texts = %s' % (str(texts)))
 
     fonts = [fonts['arial'], fonts['georgia'], fonts['verdana']]
     transforms = [splice_vertical, splice_horizontal]
 
-    images = text_images(texts, fonts, (3000,300))
+    images = text_images(texts, fonts, (200,50))
     print('images = %s' % (str(images)))
 
     catagorized = catagorized_image_transforms(images,
-                                              [edentity, invert],
-                                              [splice_horizontal, splice_vertical])
+                                              [invert],
+                                              [splice_vertical])
     print('catagorized = %s' % (str(catagorized)))
     
     count = 0
@@ -130,3 +98,4 @@ if __name__ == '__main__':
         print(count)
         count += 1
     f.close()
+    #cat = list(catagorized)
