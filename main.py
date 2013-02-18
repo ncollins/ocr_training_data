@@ -5,9 +5,8 @@ from __future__ import division
 import Image, ImageDraw, ImageFont
 import itertools
 
-from transformations import edentity, invert 
-from transformations import return_first, invert_first
-from transformations import splice_horizontal, splice_vertical
+from transformations import invert
+from transformations import splice_vertical
 
 fontsize = 64
 fonts = {
@@ -83,7 +82,6 @@ if __name__ == '__main__':
     print('texts = %s' % (str(texts)))
 
     fonts = [fonts['arial'], fonts['georgia'], fonts['verdana']]
-    transforms = [splice_vertical, splice_horizontal]
 
     images = text_images(texts, fonts, (200,50))
     print('images = %s' % (str(images)))
