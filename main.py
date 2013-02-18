@@ -75,6 +75,15 @@ def catagorized_image_transforms(images, preserving, non_preserving):
 
 
 def save_images(cat_images, dest, N):
+    """
+    Parameters:
+        cat_images - an iterable of (Image, bool) pairs where bool == True
+                     if the images is valid text
+        dest - the destination directory for the images
+        N - max number of images to produce
+    Output:
+        None
+    """
     filename = '{}/{}_{}.png'
     for i, (im, b) in enumerate(cat_images):
         if i >= N:
