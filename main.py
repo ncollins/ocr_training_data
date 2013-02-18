@@ -28,7 +28,7 @@ def text_image_single(text, font, size):
     """
     im = Image.new("L", (size[0]*2, size[1]*2))
     draw = ImageDraw.Draw(im)
-    draw.text((20, 20), text, font=font, fill=255)
+    draw.text((5, 10), text, font=font, fill=255)
     im_resized = im.resize(size, Image.ANTIALIAS)
     return im_resized
 
