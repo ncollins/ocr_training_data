@@ -8,7 +8,7 @@ import itertools
 from transformations import invert
 from transformations import splice_vertical
 
-fontsize = 64
+fontsize = 80
 fonts = {
     "song": ImageFont.truetype(u"/Library/Fonts/华文宋体.ttf",fontsize),
     "black": ImageFont.truetype(u"/Library/Fonts/华文细黑.ttf",fontsize),
@@ -28,7 +28,7 @@ def text_image_single(text, font, size):
     """
     im = Image.new("L", (size[0]*2, size[1]*2))
     draw = ImageDraw.Draw(im)
-    draw.text((5, 10), text, font=font, fill=255)
+    draw.text((0, 0), text, font=font, fill=255)
     im_resized = im.resize(size, Image.ANTIALIAS)
     return im_resized
 
@@ -44,6 +44,19 @@ def text_images(texts, fonts, size):
     """
     return (text_image_single(txt,f,size) for txt in texts 
                                         for f in fonts)
+
+
+def multi_crop(im, step):
+    im_width, im_height = im.size
+    r = range(0, im_width, step)
+    for x0 in r:
+        yield im.crop((x0, 0, x0+step, im_height))
+
+
+def multi_crop_iter(images, step):
+    for im in images:
+        for im_crop in multi_crop(im, step):
+            yield im_crop
 
 
 def ipair(iter0):
@@ -100,9 +113,10 @@ if __name__ == '__main__':
 
     fonts = [fonts['arial'], fonts['georgia'], fonts['verdana']]
 
-    images = text_images(texts, fonts, (200,50))
+    images = text_images(texts, fonts, (300,50))
+    images_cropped = multi_crop_iter(images, 50)
 
-    catagorized = catagorized_image_transforms(images,
+    catagorized = catagorized_image_transforms(images_cropped,
                                               [invert],
                                               [splice_vertical])
     
