@@ -8,7 +8,7 @@ import itertools
 from transformations import invert
 from transformations import splice_vertical
 
-fontsize = 80
+fontsize = 32
 fonts = {
     "song": ImageFont.truetype(u"/Library/Fonts/华文宋体.ttf",fontsize),
     "black": ImageFont.truetype(u"/Library/Fonts/华文细黑.ttf",fontsize),
@@ -113,13 +113,13 @@ if __name__ == '__main__':
 
     fonts = [fonts['arial'], fonts['georgia'], fonts['verdana']]
 
-    images = text_images(texts, fonts, (300,50))
-    images_cropped = multi_crop_iter(images, 50)
+    images = text_images(texts, fonts, (120, 20))
+    images_cropped = multi_crop_iter(images, 20)
 
     catagorized = catagorized_image_transforms(images_cropped,
                                               [invert],
                                               [splice_vertical])
     
-    save_images(catagorized, 'output', 400)
+    save_images(catagorized, 'output', 1000)
 
     f.close()
