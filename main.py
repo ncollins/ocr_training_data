@@ -74,26 +74,29 @@ def catagorized_image_transforms(images, preserving, non_preserving):
     return second
 
 
+def save_images(cat_images, dest, N):
+    filename = '{}/{}_{}.png'
+    for i, (im, b) in enumerate(cat_images):
+        if i >= N:
+            break
+        else:
+            cat = 'text' if b else 'non_text'
+            im.save(filename.format(dest, cat, i))
+
+
 if __name__ == '__main__':
     f = open('data/brown.txt', 'r')
 
     texts = (line for line in f)
-    #texts = ['hello', 'goodbye', 'hacker school']
-    print('texts = %s' % (str(texts)))
 
     fonts = [fonts['arial'], fonts['georgia'], fonts['verdana']]
 
     images = text_images(texts, fonts, (200,50))
-    print('images = %s' % (str(images)))
 
     catagorized = catagorized_image_transforms(images,
                                               [invert],
                                               [splice_vertical])
-    print('catagorized = %s' % (str(catagorized)))
     
-    count = 0
-    for im,b in catagorized:
-        print(count)
-        count += 1
+    save_images(catagorized, 'output', 400)
+
     f.close()
-    #cat = list(catagorized)
