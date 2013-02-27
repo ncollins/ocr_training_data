@@ -107,7 +107,13 @@ def save_images(cat_images, dest, N):
 
 
 if __name__ == '__main__':
-    f = open('data/brown.txt', 'r')
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file', nargs = 1, help='input text file')
+    parser.add_argument('dir', nargs = 1, help='location for the output files to be saved')
+    args = parser.parse_args()
+
+    f = open(args.file[0], 'r')
 
     texts = (line for line in f)
 
@@ -120,6 +126,6 @@ if __name__ == '__main__':
                                               [invert],
                                               [splice_vertical])
     
-    save_images(catagorized, 'output', 1000)
+    save_images(catagorized, args.dir[0], 1000)
 
     f.close()
