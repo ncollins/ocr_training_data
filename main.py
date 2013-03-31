@@ -113,19 +113,12 @@ if __name__ == '__main__':
     parser.add_argument('dir', nargs = 1, help='location for the output files to be saved')
     args = parser.parse_args()
 
-    f = open(args.file[0], 'r')
-
-    texts = (line for line in f)
-
-    fonts = [fonts['arial'], fonts['georgia'], fonts['verdana']]
-
-    images = text_images(texts, fonts, (120, 20))
-    images_cropped = multi_crop_iter(images, 20)
-
-    catagorized = catagorized_image_transforms(images_cropped,
-                                              [invert],
-                                              [splice_vertical])
-    
-    save_images(catagorized, args.dir[0], 1000)
-
-    f.close()
+    with open(args.file[0], 'r') as f:
+        texts = (line for line in f)
+        fonts = [fonts['arial'], fonts['georgia'], fonts['verdana']]
+        images = text_images(texts, fonts, (120, 20))
+        images_cropped = multi_crop_iter(images, 20)
+        catagorized = catagorized_image_transforms(images_cropped,
+                                                  [invert],
+                                                  [splice_vertical])
+        save_images(catagorized, args.dir[0], 1000)
